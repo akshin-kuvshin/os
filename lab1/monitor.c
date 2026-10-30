@@ -25,3 +25,14 @@ void monitor_init(monitor_t* monitor) {
 
     monitor->ready = false;
 }
+
+void monitor_destroy(monitor_t* monitor) {
+    int error = pthread_mutex_destroy(monitor->mutex);
+    assert(not error and "couldn't destroy mutex");
+
+    error = pthread_cond_destroy(monitor->can_produce);
+    assert(not error and "couldn't destroy \"can_produce\" cond");
+
+    error = pthread_cond_destroy(monitor->can_process);
+    assert(not error and "couldn't destroy \"can_process\" cond");
+}

@@ -4,6 +4,7 @@
 // Output: main.out
 // Flags: -pthread
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <iso646.h>
@@ -36,9 +37,14 @@ int main() {
     );
     assert(not error and "couldn't create consumer thread");
 
-    pthread_join(*provider_thread, NULL); // не дождёмся
-    pthread_join(*consumer_thread, NULL); // тем более не дождёмся
+    pthread_join(*provider_thread, NULL);
+    pthread_join(*consumer_thread, NULL);
 
-    // сюда мы уже не дойдём, т.к. процесс, как и его потоки, можно завершить лишь убийством
+    monitor_destroy(monitor);
+    free(monitor);
+    free(provider_thread);
+    free(consumer_thread);
+
+    printf("done.\n");
     return 0;
 }

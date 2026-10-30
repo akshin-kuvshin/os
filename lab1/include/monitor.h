@@ -16,6 +16,7 @@ typedef struct {
 } monitor_t;
 
 void monitor_init(monitor_t* monitor);
+void monitor_destroy(monitor_t* monitor);
 
 
 
