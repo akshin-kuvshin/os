@@ -24,6 +24,8 @@ void monitor_init(monitor_t* monitor) {
     assert(not error and "couldn't initialize \"can_process\" cond");
 
     monitor->ready = false;
+
+    monitor->data = 0;
 }
 
 void monitor_destroy(monitor_t* monitor) {

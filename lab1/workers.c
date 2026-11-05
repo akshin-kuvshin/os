@@ -15,19 +15,22 @@ void* provider_worker(void* arg) {
 
     monitor_t* monitor = (monitor_t*)arg;
 
-    int cnt = 0;
-    while (cnt < CNT_MAX) {
+    int cnt = 1;
+    while (cnt <= CNT_MAX) {
         pthread_mutex_lock(monitor->mutex);
 
         while (monitor->ready)
             pthread_cond_wait(monitor->can_produce, monitor->mutex);
 
+        monitor->data = cnt;
         monitor->ready = true;
-        printf("\tprovider produced event #%d\n", ++cnt);
+        printf("\tprovider produced event #%d\n", cnt++);
         pthread_cond_signal(monitor->can_process);
 
         pthread_mutex_unlock(monitor->mutex);
-        nanosleep(&second, NULL);
+
+        if (cnt <= CNT_MAX)
+            nanosleep(&second, NULL);
     }
 
     printf("provider thread died\n");
@@ -39,20 +42,23 @@ void* consumer_worker(void* arg) {
 
     monitor_t* monitor = (monitor_t*)arg;
 
-    int cnt = 0;
-    while (cnt < CNT_MAX) { // этот цикл не для ожидания события, т.е. не вместо pthread_cond_wait!
+    bool finish = false;
+    while (not finish) { // этот цикл не для ожидания события, т.е. не вместо pthread_cond_wait!
         pthread_mutex_lock(monitor->mutex);
 
         while (not monitor->ready)
             pthread_cond_wait(monitor->can_process, monitor->mutex);
 
-        // в каком-то смысле, именно здесь (в цикле) поток вывода stdout
-        // также становится критическим ресурсом (аналогично у потока-поставщика)
-        printf("\tconsumer processed event #%d\n", ++cnt);
+        int cnt = monitor->data;
         monitor->ready = false;
+        // в каком-то смысле именно здесь (в цикле) поток вывода stdout
+        // также становится критическим ресурсом (аналогично у потока-поставщика)
+        printf("\tconsumer processed event #%d\n", cnt);
         pthread_cond_signal(monitor->can_produce);
 
         pthread_mutex_unlock(monitor->mutex);
+
+        finish = (cnt == CNT_MAX);
     }
 
     printf("consumer thread died\n");

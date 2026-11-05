@@ -13,6 +13,7 @@ typedef struct {
     pthread_cond_t* can_produce;
     pthread_cond_t* can_process;
     bool ready;
+    int data;
 } monitor_t;
 
 void monitor_init(monitor_t* monitor);
