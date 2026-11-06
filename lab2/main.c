@@ -19,12 +19,12 @@
 #include <netinet/in.h>
 #include <signal.h>
 
-#define SERVER_DOMAIN AF_INET
-#define ERROR -1
+#define DOMAIN AF_INET
 #define PORT 5267
 #define BACKLOG 13
-#define EMPTY -1
 #define BUFFER_SIZE 4096
+#define ERROR -1
+#define EMPTY -1
 
 int result;
 volatile sig_atomic_t was_sighup = 0,
@@ -61,7 +61,7 @@ int main() {
     setup_signal_handler(SIGTERM, "SIGTERM", sigterm_handler);
 
 
-    int server_fd = socket(SERVER_DOMAIN, SOCK_STREAM, 0);
+    int server_fd = socket(DOMAIN, SOCK_STREAM, 0);
     if (server_fd == ERROR) {
         perror("couldn't create socket");
         exit(EXIT_FAILURE);
@@ -179,7 +179,7 @@ void configure_server(int server_fd) {
 
     struct sockaddr_in address;
     memset(&address, 0, sizeof(address));
-    address.sin_family = SERVER_DOMAIN;
+    address.sin_family = DOMAIN;
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(PORT);
     result = bind(server_fd, (struct sockaddr*)&address, sizeof(address));
