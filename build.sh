@@ -138,9 +138,9 @@ if [[ -n "$flags_attempt" ]]; then
 fi
 
 for file in "$ROOT"/*.c; do
-    "$compiler" -c "$file" -o "$tmpdir/$(basename "$file" .c).o" "$flags" 2>> "$tmpdir/$logfile"
+    "$compiler" -c "$file" -o "$tmpdir/$(basename "$file" .c).o" $flags 2>> "$tmpdir/$logfile"
 done
 
-"$compiler" "$tmpdir"/*.o -o "$ROOT/$output" "$flags" 2>> "$tmpdir/$logfile"
+"$compiler" "$tmpdir"/*.o -o "$ROOT/$output" $flags 2>> "$tmpdir/$logfile"
 
 echo "Done."
