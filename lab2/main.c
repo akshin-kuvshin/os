@@ -34,8 +34,8 @@ void restore_old_mask(int, void* arg);
 void close_server(int, void* arg);
 void configure_server(int server_fd);
 void setup_signal_handler(int sig_num, const char* const sig_name, void(* sig_handler)(int));
-void sighup_handler(int);
-void sigterm_handler(int);
+static void sighup_handler(int);
+static void sigterm_handler(int);
 
 int main() {
     sigset_t block_mask;
@@ -208,10 +208,10 @@ void setup_signal_handler(int sig_num, const char* const sig_name, void(* sig_ha
     }
 }
 
-void sighup_handler(int) {
+static void sighup_handler(int) {
     was_sighup = 1;
 }
 
-void sigterm_handler(int) {
+static void sigterm_handler(int) {
     was_sigterm = 1;
 }
